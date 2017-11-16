@@ -4,7 +4,8 @@ import telebot
 from aiohttp import web
 
 async def handler(request):
-	print(request.match_info)
+	print(request.method)
+	print(request.scheme)
 	return web.Response(text='text')
 
 # async def wshandler(request):
