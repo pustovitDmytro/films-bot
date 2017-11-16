@@ -1,0 +1,20 @@
+"message":{
+	"message_id":10,
+	"from": {
+		"id":238585617,
+		"is_bot":false,
+		"first_name":"\u0414\u043c\u0438\u0442\u0440\u043e",
+		"last_name":"\u041f\u0443\u0441\u0442\u043e\u0432\u0456\u0442",
+		"username":"dimapustovit",
+		"language_code":"uk"
+	},
+	"chat":{
+		"id":238585617,
+		"first_name":"\u0414\u043c\u0438\u0442\u0440\u043e",
+		"last_name":"\u041f\u0443\u0441\u0442\u043e\u0432\u0456\u0442",
+		"username":"dimapustovit",
+		"type":"private"
+	},
+	"date":1510786691,
+	"text":"A home or domicile\n is a dwelling-place use\nd as a permanent or semi-permanent r\nesidence for an individual, family, household or \nseveral families in a tribe. It is o\nften a house, apartment, or othe\nr building, or alternatively a mobile home, house\nboat, yurt or any other portable shelter. A principle of consti\ntutional law in many countries, related to the \nright to privacy enshrined in article 12 of the UN Declaration of Human Rights[1] is the inviolability of \nthe home as an individual's place of shelter and refuge."
+}
