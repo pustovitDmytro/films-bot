@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 import config
 import telebot
+import asyncio
 from aiohttp import web
-bot = telebot.TeleBot(config.token)
+from aiohttp import ClientSession
+bot = telebot.AsyncTeleBot(config.token)
 
 # Process webhook calls
 async def handle(request):
-    print('receive', bot.token)
-    print(request.match_info.get('token'))
-    print('status',request.match_info.get('token') == bot.token)
+    print('receive')
     if request.match_info.get('token') == bot.token:
-        print('true')
-        request_body_dict = await request.json()
-        print(request_body_dict)
-        update = telebot.types.Update.de_json(request_body_dict)
-        bot.process_new_updates([update])
+        request_body = await request.json()
+        print(request_body)
+        await send(request_body['message']['text'])
         return web.Response()
     else:
         return web.Response(status=403)
@@ -26,12 +24,14 @@ def send_welcome(message):
                  ("Hi there, I am EchoBot.\n"
                   "I am here to echo your kind words back to you."))
 
-
-# Handle all other messages
-@bot.message_handler(func=lambda message: True, content_types=['text'])
-def echo_message(message):
-    bot.reply_to(message, message.text)
-
+#https://api.themoviedb.org/3/search/movie?api_key=&query=
+async def send(text):
+    print('send starts', text)
+    async with ClientSession() as session:
+        params = {'api_key': config.apikey, 'query': text}
+        async with session.get('https://api.themoviedb.org/3/search/movie', params=params) as resp:
+            text = await resp.text()
+            print(text)
 if __name__ == '__main__':
 	app = web.Application()
 	app.router.add_post('/{token}/', handle)
