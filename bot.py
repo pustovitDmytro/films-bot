@@ -11,8 +11,9 @@ async def handle(request):
         films = await getFilm(request_body['message']['text'])
         for film in films:
             links = await getLinks(film['title'])
+            film['links'] = links
             await postFilm(film, links)
-        return web.Response(body = json.dumps(links), status=200)
+        return web.Response(body = json.dumps(films), status=200)
     else:
         return web.Response(status=403)
 
@@ -47,6 +48,7 @@ async def postFilm(film, links):
     data['chat_id'] = 238585617
     data['text'] = view(film)
     data['parse_mode']='HTML'
+    await telegram('sendPhoto', {'chat_id': 238585617, 'photo':"https://image.tmdb.org/t/p/w185{}".format(film['poster_path']) })
     await telegram('sendMessage', data)
 
 async def telegram(method, data={}):
@@ -57,7 +59,7 @@ async def telegram(method, data={}):
 def view(film):
     return """
     <b>{}</b>
-    """.format(film['title'])
+    """.format(film['title'], film['poster_path'])
 
 if __name__ == '__main__':
 	app = web.Application()
