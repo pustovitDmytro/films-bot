@@ -4,7 +4,6 @@ from aiohttp import web
 from aiohttp import ClientSession
 import json
 
-# Process webhook calls
 async def handle(request):
     print('receive')
     if request.match_info.get('token') == config.token:
@@ -24,6 +23,7 @@ async def getLinks(query):
     result['mvstape'] = await googleLink(mvstapeCX,query, 3)
     result['nnmclub'] = await googleLink(nnmclubCX,query+' subs original')
     return result
+
 async def googleLink(cx, query, n=5):
     async with ClientSession() as session:
         params = {'key': config.google,'cx':cx, 'q': query}
@@ -34,6 +34,7 @@ async def googleLink(cx, query, n=5):
             for i in range(min(n, int(body['queries']['request'][0]['totalResults']))):
                 result.append({"title": body['items'][i]['title'], "link": body['items'][i]['link']})
             return result
+
 async def getFilm(text):
     async with ClientSession() as session:
         params = {'api_key': config.apikey, 'query': text}
@@ -44,14 +45,20 @@ async def getFilm(text):
 async def postFilm(film, links):
     data = {}
     data['chat_id'] = 238585617
-    data['text'] = film['title']
+    data['text'] = view(film)
+    data['parse_mode']='HTML'
     await telegram('sendMessage', data)
 
 async def telegram(method, data={}):
     async with ClientSession() as session:
         async with session.post('https://api.telegram.org/bot{}/{}'.format(config.token,method), data=data) as resp:
             return resp.json()
- 
+
+def view(film):
+    return """
+    <b>{}</b>
+    """.format(film['title'])
+
 if __name__ == '__main__':
 	app = web.Application()
 	app.router.add_post('/{token}/', handle)
