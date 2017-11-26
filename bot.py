@@ -21,14 +21,13 @@ async def getLinks(query):
     mvstapeCX = 'partner-pub-7100147019647938:5181683182'
     nnmclubCX = 'partner-pub-7768347321290299:4038489206'
     result = {}
-    result['mvstape'] = await googleLink(mvstapeCX,query, 3)
+    result['moviestape'] = await googleLink(mvstapeCX,query, 3)
     result['nnmclub'] = await googleLink(nnmclubCX,query+' subs original')
     return result
 
 async def googleLink(cx, query, n=5):
     async with ClientSession() as session:
         params = {'key': config.google,'cx':cx, 'q': query}
-        print(query)
         async with session.get('https://www.googleapis.com/customsearch/v1', params=params) as resp:
             body = await resp.json()
             result = []
@@ -59,21 +58,26 @@ async def telegram(method, data={}):
             return await resp.json()
 
 def view(film):
+    links = ""
+    for engine in film['links']:
+        tmp = list(map((lambda x: "[{}]({})".format(x["title"][:20],x["link"])),film['links'][engine]))
+        links += "{}\n{}\n".format(engine, " ".join(tmp))
     return """
-*{}*
-_{}_
+*{0} ({1})*
+_{2}_
 ```
-{} popularity
-{} vote_average ({} votes)
-{}
+{3} popularity
+{4} vote average ({5} votes)
 ```
+{6}
     """.format(
-        film['title'],
+        film['title'],        
+        film['release_date'][:4],
         film['overview'],
         film['popularity'],
         film['vote_average'],
         film['vote_count'],
-        film['release_date'],
+        links
     )
 
 if __name__ == '__main__':
