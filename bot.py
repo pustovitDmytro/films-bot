@@ -45,21 +45,36 @@ async def getFilm(text):
 
 async def postFilm(film, links):
     data = {}
-    data['chat_id'] = 238585617
     data['text'] = view(film)
-    data['parse_mode']='HTML'
-    await telegram('sendPhoto', {'chat_id': 238585617, 'photo':"https://image.tmdb.org/t/p/w185{}".format(film['poster_path']) })
-    await telegram('sendMessage', data)
+    print(view(film))
+    data['parse_mode']='Markdown'
+    await telegram('sendPhoto', {'photo':"https://image.tmdb.org/t/p/w185{}".format(film['poster_path']) })
+    send = await telegram('sendMessage', data)
+    print(send)
 
 async def telegram(method, data={}):
     async with ClientSession() as session:
+        data['chat_id'] = 238585617
         async with session.post('https://api.telegram.org/bot{}/{}'.format(config.token,method), data=data) as resp:
-            return resp.json()
+            return await resp.json()
 
 def view(film):
     return """
-    <b>{}</b>
-    """.format(film['title'], film['poster_path'])
+*{}*
+_{}_
+```
+{} popularity
+{} vote_average ({} votes)
+{}
+```
+    """.format(
+        film['title'],
+        film['overview'],
+        film['popularity'],
+        film['vote_average'],
+        film['vote_count'],
+        film['release_date'],
+    )
 
 if __name__ == '__main__':
 	app = web.Application()
